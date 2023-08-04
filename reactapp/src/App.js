@@ -1,7 +1,7 @@
 import React from "react"; 
 import questionsData from "./questionData.js"; 
 import Results from "./components/UI/Results"; 
-import Button from "./components/UI/Button/Button.js"; 
+import Button from "./components/UI/Button"; 
 import Card from "./components/UI/Card/Card.js"; 
 import Banner from "./Banner.js"; 
  
