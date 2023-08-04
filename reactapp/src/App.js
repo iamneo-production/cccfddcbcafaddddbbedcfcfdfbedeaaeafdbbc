@@ -1,101 +1,134 @@
-import styles from "./App.module.css";
-import Banner from "./Componets/UI/Banner/Banner";
-import { useState } from "react";
-import Button from "./Componets/UI/Button/Button";
-import QuizData from "./Data/Data";
-import Card from "./Componets/UI/Card/Card";
-
-const resultBanner = {
-  backgroundColor: "#FA5F55",
-  borderRadius: "2%",
-  fontWeight: "bold",
-};
-
-const startButtonStyle = {
-  backgroundColor: "#FFDBAC",
-  textAlign: "center",
-  width: "100%",
-};
-
-const optionsButtonStyle = {
-  backgroundColor: "#FFDBAC",
-  textAlign: "center",
-  width: "100%",
-};
-
-const showResultButtonStyle = {
-  backgroundColor: "green",
-  textAlign: "center",
-  color: "white",
-};
-
-function App() {
-  const [showResult, setShowResult] = useState(false);
-  const [showStartBtn, setShowStartBtn] = useState(true);
-  const [countCorrectAnswers, setCountCorrectAnswers] = useState(0);
-
-  function onClickHandler() {
-    setShowStartBtn(!showStartBtn);
-    setShowResult(false);
-    setCountCorrectAnswers(0);
-  }
-
-  function showResultHandler() {
-    setShowStartBtn(!showStartBtn);
-    setShowResult(false);
-    setShowResult(true);
-  }
-
-  return (
-    <div className={styles.Wrapper}>
-      <h1>Quizz App</h1>
-
-      <ResultBanner showResult={showResult} result={countCorrectAnswers} />
-
-      <div className={styles.StartButton} onClick={onClickHandler}>
-        {showStartBtn && (
-          <Button buttonText={"Start Quiz"} ButtonStyle={startButtonStyle} />
-        )}
-      </div>
-
-      {!showStartBtn && (
-        <div className={styles.QuizDataContainer}>
-          {QuizData.map((value, index) => {
-            return (
-              <Card
-                key={index}
-                value={value}
-                ButtonStyle={optionsButtonStyle}
-                countCorrectAnswers={countCorrectAnswers}
-                setCountCorrectAnswers={setCountCorrectAnswers}
-              />
-            );
-          })}
-        </div>
-      )}
-      {!showStartBtn && (
-        <div className={styles.ShowResultButton} onClick={showResultHandler}>
-          <Button
-            buttonText={"Show Result"}
-            ButtonStyle={showResultButtonStyle}
-          />
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ResultBanner({ showResult, result }) {
-  return (
-    <>
-      {showResult && (
-        <Banner
-          styleObject={resultBanner}
-          text={`You have answered ${result}/5 correctly`}
-        />
-      )}
-    </>
-  );
-}
-
-export default App;
+import React from "react"; 
+import questionsData from "./questionData.js"; 
+import Results from "./components/UI/Results"; 
+import Button from "./components/UI/Button/Button.js"; 
+import Card from "./components/UI/Card/Card.js"; 
+import Banner from "./Banner.js"; 
+ 
+class App extends React.Component { 
+  constructor(props) { 
+    super(props); 
+    this.state = { 
+      selectedAnswers: [], 
+      disabledQuestions: [], 
+      showResults: false, 
+      showQuestions: false, 
+      questionsCorrect: 0, 
+      afterAnswerSubmit: false, 
+    }; 
+    this.handleAnswerSelected = this.handleAnswerSelected.bind(this); 
+    this.handleShowResults = this.handleShowResults.bind(this); 
+    this.handleResetQuiz = this.handleResetQuiz.bind(this); 
+    this.handleStartQuiz = this.handleStartQuiz.bind(this); 
+    this.calculateScore = this.calculateScore.bind(this); 
+    this.renderResults = this.renderResults.bind(this); 
+  } 
+ 
+  handleAnswerSelected(questionIndex, answerIndex) { 
+    const updatedSelectedAnswers = [...this.state.selectedAnswers]; 
+    updatedSelectedAnswers[questionIndex] = answerIndex; 
+    this.setState({ 
+      selectedAnswers: updatedSelectedAnswers, 
+    }); 
+    const updatedDisabledQuestions = [...this.state.disabledQuestions]; 
+    updatedDisabledQuestions[questionIndex] = true; 
+    this.setState({ 
+      disabledQuestions: updatedDisabledQuestions, 
+    }); 
+  } 
+ 
+  handleShowResults() { 
+    const res = this.calculateScore(); 
+    this.setState({ 
+      showResults: true, 
+      showQuestions: false, 
+      afterAnswerSubmit: true, 
+      questionsCorrect: res, 
+    }); 
+  } 
+ 
+  handleResetQuiz() { 
+    this.setState({ 
+      selectedAnswers: [], 
+      disabledQuestions: [], 
+      showResults: false, 
+      showQuestions: true, 
+      questionsCorrect: 0, 
+      afterAnswerSubmit: false, 
+    }); 
+  } 
+ 
+  calculateScore() { 
+    let score = 0; 
+    for (let i = 0; i < questionsData.length; i++) { 
+      if (this.state.selectedAnswers[i] === questionsData[i].correctAnswer) { 
+        score++; 
+      } 
+    } 
+    return score; 
+  } 
+ 
+  renderResults() { 
+    const score = this.calculateScore(); 
+    return ( 
+      <Results 
+        score={score} 
+        numQuestions={questionsData.length} 
+        onResetQuiz={this.handleResetQuiz} 
+      /> 
+    ); 
+  } 
+ 
+  handleStartQuiz() { 
+    this.setState({ 
+      showQuestions: true, 
+      afterAnswerSubmit: false, 
+    }); 
+  } 
+ 
+  render() { 
+    const allQuestionsAnswered = 
+      this.state.selectedAnswers.length === questionsData.length; 
+ 
+      return ( 
+        <div className="App"> 
+          {!this.state.afterAnswerSubmit && <h1>Quizz App</h1>} 
+          {!this.state.showQuestions && !this.state.afterAnswerSubmit && ( 
+            <Button onClick={this.handleStartQuiz}>Start Quiz</Button> 
+          )} 
+          {this.state.showQuestions && 
+            questionsData.map((question, index) => ( 
+              <Card 
+                key={index} 
+                question={question.question} 
+                options={question.answers} 
+                questionIndex={index} 
+                selectedAnswer={this.state.selectedAnswers[index]} 
+                onAnswerSelected={(answer) => 
+                  this.handleAnswerSelected(index, answer) 
+                } 
+                disabled={this.state.disabledQuestions[index]} 
+              /> 
+            ))} 
+          {this.state.showQuestions && allQuestionsAnswered && !this.state.showResults && ( 
+            <Button onClick={this.handleShowResults} disabled={!allQuestionsAnswered}> 
+              Show Results 
+            </Button> 
+          )} 
+          {this.state.showResults && ( 
+            <> 
+              <Banner 
+                questionsCorrect={this.state.questionsCorrect} 
+                numQuestions={questionsData.length} 
+                onResetQuiz={this.handleResetQuiz} 
+              /> 
+              {this.renderResults()} 
+            </> 
+          )} 
+        </div> 
+      ); 
+       
+      } 
+      } 
+       
+      export default App;
