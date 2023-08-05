@@ -1,33 +1,33 @@
 const QuizData = [{
-        Question: 'Who is the father of nation ?',
+        Question: 1,questionText:'Who is the father of nation ?',
         options: [
             'Mahatma Gandhi', 'Jawaharlal Nehru', 'Donald Trump', 'Barrack Obama'
         ],
         correctAnswer: 'Mahatma Gandhi'
     },
     {
-        Question: 'What color is are the leaves ?',
+        Question:2, questionText: 'What color is are the leaves ?',
         options: [
             'Blue', 'Red', 'Yellow', 'Green'
         ],
         correctAnswer: 'Green'
     },
     {
-        Question: 'What color is the sky ?',
+        Question: 3, questionText:'What color is the sky ?',
         options: [
             'Blue', 'Red', 'Yellow', 'Green'
         ],
         correctAnswer: 'Blue'
     },
     {
-        Question:'What color is the sky ?',
+        Question:4, questionText:'What color is the sky ?',
         options: [
             'Blue', 'Red', 'Yellow', 'Green'
         ],
         correctAnswer: 'Blue'
     },
     {
-        Question:'What color is the fire ?',
+        Question:5,questionText:'What color is the fire ?',
         options: [
             'Blue', 'Red', 'Yellow', 'Green'
         ],
