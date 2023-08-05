@@ -20,14 +20,14 @@ const QuizData = [{
         correctAnswer: 'Blue'
     },
     {
-        Question: 'What color is the sky ?',
+        Question:'What color is the sky ?',
         options: [
             'Blue', 'Red', 'Yellow', 'Green'
         ],
         correctAnswer: 'Blue'
     },
     {
-        Question: 'What color is the fire ?',
+        Question:'What color is the fire ?',
         options: [
             'Blue', 'Red', 'Yellow', 'Green'
         ],
